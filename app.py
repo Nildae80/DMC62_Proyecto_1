@@ -167,17 +167,43 @@ elif modulos == "Ejercicio 3":
     
     st.subheader("Formulario de registro para calcular el tiempo de transferencia de un archivo con `funciones` ✏️")
 
+    # --- FORMULARIO DE STREAMLIT ---
     with st.form("form_funcion", clear_on_submit=True):
-        tipo_Funcion = st.selectbox("Seleccione el tipo de función", ["Calcular tiempo de transferencia de archivo", "Otro"], index=None, placeholder="Seleccione tipo de opción...")  
-        tamano_archivo = float(st.number_input("Ingresa el tamaño del archivo (MB)", value=0.00, min_value=0.0, step=0.1, format="%.2f"))
-        velocidad = float(st.number_input("Ingresa la velocidad de transferencia (MBPS)", value=0.00, min_value=0.0, step=0.1, format="%.2f"))
-        btn_guardar = st.form_submit_button("Guardar ➕")
-      
-    if btn_guardar:
-        if tipo_Funcion is None:
-            st.warning("Por favor seleccione un tipo de opción.")
+        tipo_Funcion = st.selectbox(
+            "Seleccione el tipo de función",
+            ["Calcular tiempo de transferencia de archivo", "Otro"],
+            index=None,
+            placeholder="Seleccione tipo de opción..."
+        )  
+        
+        # Carga dinámica de inputs según la opción seleccionada
+        if tipo_Funcion == "Calcular tiempo de transferencia de archivo":
+            tamano_archivo = float(st.number_input(
+                "Ingresa el tamaño del archivo (MB)",
+                value=0.00,
+                min_value=0.0,
+                step=0.1,
+                format="%.2f"
+            ))
+            velocidad = float(st.number_input(
+                "Ingresa la velocidad de transferencia (MBPS)",
+                value=0.00,
+                min_value=0.0,
+                step=0.1,
+                format="%.2f"
+            ))
         elif tipo_Funcion == "Otro":
             st.info("No se tiene implementado otras funciones por el momento.")
+
+        # El botón DEBE ir siempre al final del st.form fuera de los condicionales
+        btn_guardar = st.form_submit_button("Guardar ➕")
+      
+    # --- LÓGICA AL PRESIONAR EL BOTÓN ---
+    if btn_guardar:
+        if tipo_Funcion is None:
+            st.warning("Por favor, selecciona una opción del menú desplegable antes de guardar.")
+        elif tipo_Funcion == "Otro":
+            st.warning("No se puede realizar ningún cálculo con la opción 'Otro'.")
         elif tipo_Funcion == "Calcular tiempo de transferencia de archivo":
             if velocidad <= 0 or tamano_archivo <= 0:
                 st.error("El tamaño del archivo y la velocidad deben ser mayores a 0.")
@@ -188,14 +214,20 @@ elif modulos == "Ejercicio 3":
         
                 nuevo_registro = np.array([[tamano_archivo, velocidad, minutos, segundos]], dtype=object)
                 st.session_state.tiempo = np.vstack((st.session_state.tiempo, nuevo_registro))
+                
                 st.toast("¡Cálculo realizado y guardado con éxito!", icon="✅")
                 st.rerun()
 
+    # --- TABLA HISTÓRICA (Fuera del formulario) ---
     if st.session_state.tiempo.shape[0] > 0:
         st.subheader("⚡ Tabla histórica de resultados obtenidos")
-        df_mostrar = pd.DataFrame(st.session_state.tiempo, columns=["Tamaño (MB)", "Velocidad (MBPS)", "Tiempo en Minutos", "Tiempo en Segundos"])
+        df_mostrar = pd.DataFrame(
+            st.session_state.tiempo,
+            columns=["Tamaño (MB)", "Velocidad (MBPS)", "Tiempo en Minutos", "Tiempo en Segundos"]
+        )
         st.dataframe(
-            df_mostrar, use_container_width=True,
+            df_mostrar,
+            use_container_width=True,
             column_config={
                 "Tamaño (MB)": st.column_config.NumberColumn("Tamaño (MB)", format="%.2f MB"),
                 "Velocidad (MBPS)": st.column_config.NumberColumn("Velocidad (MBPS)", format="%.2f MBPS"),
@@ -205,6 +237,7 @@ elif modulos == "Ejercicio 3":
         )
     else:
         st.info("Aún no hay ejecuciones registradas.")
+
 
 ## EJERCICIO 4
 else:
