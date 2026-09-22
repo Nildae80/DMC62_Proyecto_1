@@ -196,7 +196,7 @@ elif modulos == "Ejercicio 3":
             st.info("No se tiene implementado otras funciones por el momento.")
 
         # El botón DEBE ir siempre al final del st.form fuera de los condicionales
-    btn_guardar = st.form_submit_button("Guardar ➕")
+        btn_guardar = st.form_submit_button("Guardar ➕")
       
     # --- LÓGICA AL PRESIONAR EL BOTÓN ---
     if btn_guardar:
