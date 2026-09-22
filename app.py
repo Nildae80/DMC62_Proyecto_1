@@ -2,7 +2,7 @@ import streamlit as st
 import numpy as np
 import pandas as pd
 import libreria_funciones_proyecto1 as lf
-from libreria_clases_proyecto1 import Servidor
+from librería_clases_proyecto1 import Servidor
 
 st.set_page_config(
     page_title="Proyecto 1 | Python Analytics",
